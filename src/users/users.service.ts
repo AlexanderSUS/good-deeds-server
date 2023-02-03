@@ -50,13 +50,9 @@ export class UsersService {
       this.configService.get(EnvVariables.cryptSalt),
     );
 
-    await this.userModel.findByIdAndUpdate(
-      id,
-      {
-        refreshTokenHash,
-      },
-      { new: true },
-    );
+    await this.userModel.findByIdAndUpdate(id, {
+      refreshTokenHash,
+    });
   }
 
   async getUserIfRefreshTokenMatches(refreshToken: string, userId: string) {
@@ -84,11 +80,9 @@ export class UsersService {
   }
 
   async removeRefreshToken(id: string) {
-    const user = await this.userModel.findByIdAndUpdate(
-      id,
-      { refreshTokenHash: null },
-      { new: true },
-    );
+    const user = await this.userModel
+      .findByIdAndUpdate(id, { refreshTokenHash: null })
+      .setOptions({ new: true });
 
     if (!user) {
       throw new NotFoundException();
