@@ -9,6 +9,7 @@ import {
   Req,
 } from '@nestjs/common';
 import RequestWithUser from 'src/auth/interface/reuestWithUser.interface';
+import { ValidateMongoId } from 'src/pipes/validate-mongo-id.pipe';
 import { DeedsService } from './deeds.service';
 import { CreateDeedDto } from './dto/create-deed.dto';
 import { UpdateDeedDto } from './dto/update-deed.dto';
@@ -31,17 +32,20 @@ export class DeedsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ValidateMongoId) id: string) {
     return this.deedsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDeedDto: UpdateDeedDto) {
+  update(
+    @Param('id', ValidateMongoId) id: string,
+    @Body() updateDeedDto: UpdateDeedDto,
+  ) {
     return this.deedsService.update(id, updateDeedDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ValidateMongoId) id: string) {
     return this.deedsService.remove(id);
   }
 }
