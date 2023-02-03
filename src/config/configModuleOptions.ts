@@ -10,6 +10,11 @@ export const configModuleOptions = {
     MONGO_PASSWORD: Joi.string().required(),
     MONGO_DATABASE: Joi.string().required(),
     MONGO_HOST: Joi.string().required(),
+    CRYPT_SALT: Joi.number().required(),
+    JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+    JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+    JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+    JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
   }),
   validationOptions: {
     abortEarly: true,
