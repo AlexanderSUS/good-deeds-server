@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -7,6 +11,7 @@ import { User, UserDocument } from './user.schema';
 import { Model } from 'mongoose';
 import { EnvVariables } from 'src/config/envVariables.enum';
 import * as bcrypt from 'bcrypt';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -68,15 +73,43 @@ export class UsersService {
     }
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.userModel
-      .findByIdAndUpdate(id, updateUserDto)
-      .setOptions({ overwrite: true, new: true });
+  private async getNewHashedPassword(
+    oldHashedPassword: string,
+    oldPlainPassword: string,
+    newPlainPassword: string,
+  ) {
+    const isPasswordMatching = await bcrypt.compare(
+      oldPlainPassword,
+      oldHashedPassword,
+    );
 
-    if (!user) {
-      throw new NotFoundException();
+    if (!isPasswordMatching) {
+      throw new BadRequestException('Password is wrong');
     }
-    return user;
+
+    return bcrypt.hash(
+      newPlainPassword,
+      this.configService.get(EnvVariables.cryptSalt),
+    );
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+  }
+
+  async updatePassword(
+    id: string,
+    { newPassword, oldPassword }: UpdatePasswordDto,
+  ) {
+    const user = await this.userModel.findById(id);
+
+    user.password = await this.getNewHashedPassword(
+      user.password,
+      oldPassword,
+      newPassword,
+    );
+
+    return user.save();
   }
 
   async removeRefreshToken(id: string) {

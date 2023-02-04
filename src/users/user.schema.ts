@@ -19,6 +19,9 @@ export class User {
   @Prop()
   @Exclude()
   refreshTokenHash: string;
+
+  @Prop([String])
+  friendsIds: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
