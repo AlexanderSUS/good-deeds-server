@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Exclude, Transform } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export type UserDocument = User & Document;
 
@@ -13,19 +13,13 @@ export class User {
   nickname: string;
 
   @Prop()
-  @Exclude()
   password: string;
 
   @Prop()
-  @Exclude()
   refreshTokenHash: string;
 
   @Prop([String])
   friendsIds: string[];
-
-  @Prop()
-  @Exclude()
-  __v: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

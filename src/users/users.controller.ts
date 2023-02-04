@@ -5,7 +5,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseInterceptors,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -21,38 +20,47 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ValidateMongoId } from 'src/pipes/validate-mongo-id.pipe';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import MongooseClassSerializerInterceptor from 'src/common/mongooseClassSerializer.interceptor';
-import { User } from './user.schema';
 import { UserGuard } from 'src/auth/guards/user.guard';
 import { UserDto } from './dto/user.dto';
 import { BadRequestDto } from 'src/common/dto/bad-request.dto';
 
 @ApiTags('users')
 @Controller('users')
-@UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
   @ApiOkResponse({ type: [UserDto] })
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return (await this.usersService.findAll()).map(
+      ({ _id, friendsIds, nickname }) => ({
+        _id,
+        friendsIds,
+        nickname,
+      }),
+    );
   }
 
   @Get(':id')
   @ApiOkResponse({ type: UserDto })
-  findOne(@Param('id', ValidateMongoId) id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id', ValidateMongoId) id: string) {
+    const { password, refreshTokenHash, ...userResponse } =
+      await this.usersService.findOne(id);
+
+    return userResponse;
   }
 
   @UseGuards(UserGuard)
   @Patch(':id')
   @ApiOkResponse({ type: UserDto })
-  update(
+  async update(
     @Param('id', ValidateMongoId) id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.usersService.update(id, updateUserDto);
+    const { password, refreshTokenHash, ...userResponse } =
+      await this.usersService.update(id, updateUserDto);
+
+    return userResponse;
   }
 
   @UseGuards(UserGuard)

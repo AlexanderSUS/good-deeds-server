@@ -7,7 +7,6 @@ import {
   HttpCode,
   HttpStatus,
   Get,
-  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiCookieAuth,
@@ -26,14 +25,11 @@ import { RefreshAuthGuard } from './guards/refresh-auth.guard';
 import RequestWithUser from './interface/reuestWithUser.interface';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UsersService } from 'src/users/users.service';
-import MongooseClassSerializerInterceptor from 'src/common/mongooseClassSerializer.interceptor';
-import { User } from 'src/users/user.schema';
 import { BadRequestDto } from 'src/common/dto/bad-request.dto';
 import { UserDto } from 'src/users/dto/user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
-@UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -46,8 +42,12 @@ export class AuthController {
   })
   @ApiBadRequestResponse({ type: BadRequestDto })
   @Post('register')
-  register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
+  async register(@Body() createUserDto: CreateUserDto) {
+    const user = await this.authService.register(createUserDto);
+    user.password = undefined;
+    user.refreshTokenHash = undefined;
+
+    return user;
   }
 
   @Public()
@@ -74,6 +74,8 @@ export class AuthController {
     ]);
 
     user.password = undefined;
+    user.refreshTokenHash = undefined;
+
     return user;
   }
 
@@ -95,8 +97,11 @@ export class AuthController {
     type: UserDto,
   })
   @ApiBadRequestResponse({ type: BadRequestDto })
-  authenticate(@Request() request: RequestWithUser) {
-    return request.user;
+  authenticate(@Request() { user }: RequestWithUser) {
+    user.password = undefined;
+    user.refreshTokenHash = undefined;
+
+    return user;
   }
 
   @Public()
@@ -113,6 +118,10 @@ export class AuthController {
     );
 
     request.res.setHeader('Set-Cookie', accessTokenCookie);
-    return request.user;
+    const { user } = request;
+    user.password = undefined;
+    user.refreshTokenHash = undefined;
+
+    return user;
   }
 }
