@@ -18,12 +18,15 @@ import {
   ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
   ApiTags,
   ApiBody,
 } from '@nestjs/swagger';
 import { DeedGuard } from 'src/auth/guards/deed.guard';
 import RequestWithUser from 'src/auth/interface/reuestWithUser.interface';
 import { BadRequestDto } from 'src/common/dto/bad-request.dto';
+import { ForbiddenDto } from 'src/common/dto/forbidden.dto';
+import { NotFoundDto } from 'src/common/dto/not-found.dto';
 import { ValidateMongoId } from 'src/pipes/validate-mongo-id.pipe';
 import { DeedsService } from './deeds.service';
 import { CreateDeedDto } from './dto/create-deed.dto';
@@ -38,6 +41,7 @@ export class DeedsController {
 
   @Post()
   @ApiCreatedResponse({ type: DeedDto })
+  @ApiBadRequestResponse({ type: BadRequestDto })
   create(
     @Body() createDeedDto: CreateDeedDto,
     @Req() { user: { _id } }: RequestWithUser,
@@ -66,6 +70,8 @@ export class DeedsController {
   })
   @ApiOkResponse({ type: DeedDto })
   @ApiBadRequestResponse({ type: BadRequestDto })
+  @ApiNotFoundResponse({ type: NotFoundDto })
+  @ApiForbiddenResponse({ type: ForbiddenDto })
   update(
     @Param('id', ValidateMongoId) id: string,
     @Body() updateDeedDto: UpdateDeedDto,
@@ -78,6 +84,7 @@ export class DeedsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse()
   @ApiBadRequestResponse({ type: BadRequestDto })
+  @ApiForbiddenResponse({ type: ForbiddenDto })
   async remove(@Param('id', ValidateMongoId) id: string) {
     await this.deedsService.remove(id);
   }

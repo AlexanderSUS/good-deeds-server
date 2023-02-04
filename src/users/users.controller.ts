@@ -14,6 +14,8 @@ import {
   ApiOkResponse,
   ApiNoContentResponse,
   ApiBadRequestResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -23,6 +25,8 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { UserGuard } from 'src/auth/guards/user.guard';
 import { UserDto } from './dto/user.dto';
 import { BadRequestDto } from 'src/common/dto/bad-request.dto';
+import { NotFoundDto } from 'src/common/dto/not-found.dto';
+import { ForbiddenDto } from 'src/common/dto/forbidden.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -43,6 +47,7 @@ export class UsersController {
 
   @Get(':id')
   @ApiOkResponse({ type: UserDto })
+  @ApiNotFoundResponse({ type: NotFoundDto })
   async findOne(@Param('id', ValidateMongoId) id: string) {
     const { password, refreshTokenHash, ...userResponse } =
       await this.usersService.findOne(id);
@@ -53,6 +58,8 @@ export class UsersController {
   @UseGuards(UserGuard)
   @Patch(':id')
   @ApiOkResponse({ type: UserDto })
+  @ApiBadRequestResponse({ type: BadRequestDto })
+  @ApiForbiddenResponse({ type: ForbiddenDto })
   async update(
     @Param('id', ValidateMongoId) id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -69,6 +76,7 @@ export class UsersController {
   @ApiCookieAuth()
   @ApiNoContentResponse()
   @ApiBadRequestResponse({ type: BadRequestDto })
+  @ApiForbiddenResponse({ type: ForbiddenDto })
   async updatePassword(
     @Param('id', ValidateMongoId) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
@@ -82,6 +90,7 @@ export class UsersController {
   @ApiCookieAuth()
   @ApiNoContentResponse()
   @ApiBadRequestResponse({ type: BadRequestDto })
+  @ApiForbiddenResponse({ type: ForbiddenDto })
   remove(@Param('id', ValidateMongoId) id: string) {
     return this.usersService.remove(id);
   }

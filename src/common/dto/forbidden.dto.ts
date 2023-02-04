@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BadRequestDto {
+export class ForbiddenDto {
   @ApiProperty({
-    example: '400',
+    example: '403',
   })
   statusCode: number;
 
   @ApiProperty({
-    example: 'reason',
+    example: 'Forbidden',
   })
   message: string;
 }
