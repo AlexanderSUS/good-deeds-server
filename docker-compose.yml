@@ -2,9 +2,25 @@ version: "3"
 services:
   mongo:
     image: mongo:latest
+    container_name: good-deeds-db
+    env_file: 
+    - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     ports:
       - '27017:27017'
+  app:
+    image: alexandersus/good-deeds-server:v1
+    container_name: good-deeds-server
+    build: .
+    depends_on:
+      - mongo
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - .:/app
+    env_file: 
+    - .env
+    restart: unless-stopped
