@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +13,7 @@ import { Model } from 'mongoose';
 import { EnvVariables } from 'src/config/envVariables.enum';
 import * as bcrypt from 'bcrypt';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { MongooseErrorCode } from 'src/database/mongooseErrorCode.enum';
 
 @Injectable()
 export class UsersService {
@@ -94,7 +96,20 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true });
+    try {
+      const updatedUser = await this.userModel.findByIdAndUpdate(
+        id,
+        updateUserDto,
+        { new: true },
+      );
+      return updatedUser;
+    } catch (error) {
+      if (error?.code === MongooseErrorCode.DuplicateKey) {
+        throw new BadRequestException('Nickname already exist');
+      }
+
+      throw new InternalServerErrorException('Something went wrong');
+    }
   }
 
   async updatePassword(

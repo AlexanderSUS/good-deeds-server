@@ -7,7 +7,9 @@ import {
   Param,
   Delete,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { DeedGuard } from 'src/auth/guards/deed.guard';
 import RequestWithUser from 'src/auth/interface/reuestWithUser.interface';
 import { ValidateMongoId } from 'src/pipes/validate-mongo-id.pipe';
 import { DeedsService } from './deeds.service';
@@ -36,6 +38,7 @@ export class DeedsController {
     return this.deedsService.findOne(id);
   }
 
+  @UseGuards(DeedGuard)
   @Patch(':id')
   update(
     @Param('id', ValidateMongoId) id: string,
@@ -44,6 +47,7 @@ export class DeedsController {
     return this.deedsService.update(id, updateDeedDto);
   }
 
+  @UseGuards(DeedGuard)
   @Delete(':id')
   remove(@Param('id', ValidateMongoId) id: string) {
     return this.deedsService.remove(id);
