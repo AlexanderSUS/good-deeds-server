@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsString,
@@ -5,16 +6,17 @@ import {
   Length,
   IsOptional,
 } from 'class-validator';
-import { CreateDeedDto } from './create-deed.dto';
 
-export class UpdateDeedDto extends CreateDeedDto {
+export class UpdateDeedDto {
+  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   @IsNotEmpty()
   @Length(1, 200)
-  title: string;
+  title?: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
   @IsBoolean()
-  isDone: boolean;
+  isDone?: boolean;
 }
