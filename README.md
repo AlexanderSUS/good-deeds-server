@@ -27,6 +27,7 @@ App will be available on `http://localhost:4000/api'
 While the application is running, open your browser and navigate to `http://localhost:4000/docs`.
 You will find the Swagger documentation.
 
+<hr>
 
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
