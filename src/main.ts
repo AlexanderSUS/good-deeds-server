@@ -9,14 +9,18 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const docsConfig = new DocumentBuilder().setTitle('Good-deeds').build();
-
-  const document = SwaggerModule.createDocument(app, docsConfig);
-  SwaggerModule.setup('docs', app, document);
+  const docsConfig = new DocumentBuilder()
+    .setBasePath('api')
+    .setTitle('Good-deeds')
+    .addCookieAuth()
+    .build();
 
   app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
+
+  const document = SwaggerModule.createDocument(app, docsConfig);
+  SwaggerModule.setup('docs', app, document);
 
   const configService = app.get(ConfigService);
   const port = configService.get(EnvVariables.appPort);

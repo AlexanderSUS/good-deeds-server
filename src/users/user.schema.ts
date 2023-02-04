@@ -22,6 +22,10 @@ export class User {
 
   @Prop([String])
   friendsIds: string[];
+
+  @Prop()
+  @Exclude()
+  __v: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

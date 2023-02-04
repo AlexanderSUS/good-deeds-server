@@ -9,6 +9,15 @@ import {
   Get,
   UseInterceptors,
 } from '@nestjs/common';
+import {
+  ApiCookieAuth,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiBadRequestResponse,
+  ApiTags,
+  ApiBody,
+} from '@nestjs/swagger';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -19,7 +28,10 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { UsersService } from 'src/users/users.service';
 import MongooseClassSerializerInterceptor from 'src/common/mongooseClassSerializer.interceptor';
 import { User } from 'src/users/user.schema';
+import { BadRequestDto } from 'src/common/dto/bad-request.dto';
+import { UserDto } from 'src/users/dto/user.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 @UseInterceptors(MongooseClassSerializerInterceptor(User))
 export class AuthController {
@@ -29,6 +41,10 @@ export class AuthController {
   ) {}
 
   @Public()
+  @ApiCreatedResponse({
+    type: UserDto,
+  })
+  @ApiBadRequestResponse({ type: BadRequestDto })
   @Post('register')
   register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
@@ -37,6 +53,11 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @UseGuards(LocalAuthGuard)
+  @ApiBody({ type: CreateUserDto })
+  @ApiOkResponse({
+    type: UserDto,
+  })
+  @ApiBadRequestResponse({ type: BadRequestDto })
   @Post('login')
   async login(@Request() request: RequestWithUser) {
     const { user } = request;
@@ -59,6 +80,9 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiCookieAuth()
+  @ApiNoContentResponse()
+  @ApiBadRequestResponse({ type: BadRequestDto })
   async logOut(@Request() request: RequestWithUser) {
     await this.usersService.removeRefreshToken(request.user._id);
     request.res.setHeader('Set-Cookie', this.authService.getCookieForLogOut());
@@ -66,6 +90,11 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
+  @ApiCookieAuth()
+  @ApiOkResponse({
+    type: UserDto,
+  })
+  @ApiBadRequestResponse({ type: BadRequestDto })
   authenticate(@Request() request: RequestWithUser) {
     return request.user;
   }
@@ -73,6 +102,11 @@ export class AuthController {
   @Public()
   @UseGuards(RefreshAuthGuard)
   @Get('refresh')
+  @ApiCookieAuth()
+  @ApiOkResponse({
+    type: UserDto,
+  })
+  @ApiBadRequestResponse({ type: BadRequestDto })
   refresh(@Request() request: RequestWithUser) {
     const accessTokenCookie = this.authService.getCookieWithJwtAccessToken(
       request.user._id,
