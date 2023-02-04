@@ -34,6 +34,7 @@ export class UsersService {
 
   async findOne(id: string) {
     const user = await this.userModel.findById(id);
+
     if (!user) {
       throw new NotFoundException();
     }
@@ -124,7 +125,7 @@ export class UsersService {
       newPassword,
     );
 
-    return user.save();
+    await user.save();
   }
 
   async removeRefreshToken(id: string) {

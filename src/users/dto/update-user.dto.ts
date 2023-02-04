@@ -1,3 +1,4 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
   IsNotEmpty,
@@ -6,16 +7,23 @@ import {
   IsMongoId,
   IsArray,
 } from 'class-validator';
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
+export class UpdateUserDto {
+  @ApiPropertyOptional({
+    minLength: 1,
+    maxLength: 100,
+  })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
   @Length(1, 100)
   nickname?: string;
 
+  @ApiPropertyOptional({
+    minLength: 8,
+    maxLength: 20,
+  })
+  @IsOptional()
   @IsOptional()
   @IsArray()
   @IsMongoId({ each: true })
