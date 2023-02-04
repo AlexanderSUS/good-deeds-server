@@ -1,3 +1,33 @@
+# Good deeds api
+
+
+## RUN APPLICATION
+For running application you should have docker installed on your system
+
+1. Clone this repo
+```
+git clone git@github.com:AlexanderSUS/good-deeds-server.git
+```
+
+2. Go to repo folder
+```
+cd good-deeds-server
+```
+
+3. Rename .env.example to .env
+
+4. Run app in docker with command
+```
+docker compose up
+```
+
+App will be available on `http://localhost:4000/api'
+
+## Swagger
+While the application is running, open your browser and navigate to `http://localhost:4000/docs`.
+You will find the Swagger documentation.
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
