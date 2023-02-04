@@ -10,8 +10,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const docsConfig = new DocumentBuilder()
-    .setBasePath('api')
     .setTitle('Good-deeds')
+    .setDescription('Good deeds api description')
     .addCookieAuth()
     .build();
 
