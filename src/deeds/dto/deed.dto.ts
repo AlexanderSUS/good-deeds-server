@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class DeedDto {
+  @ApiProperty()
+  _id: string;
+
   @ApiProperty({
     example: 'Feed a birds',
   })
@@ -8,4 +11,7 @@ export class DeedDto {
 
   @ApiProperty()
   isDone: boolean;
+
+  @ApiProperty()
+  userId: string;
 }
