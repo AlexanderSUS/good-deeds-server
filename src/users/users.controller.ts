@@ -55,6 +55,13 @@ export class UsersController {
     return userResponse;
   }
 
+  @Get(':id/friends')
+  @ApiOkResponse({ type: UserDto })
+  @ApiNotFoundResponse({ type: NotFoundDto })
+  getFriends(@Param('id', ValidateMongoId) id: string) {
+    return this.usersService.findFriends(id);
+  }
+
   @UseGuards(UserGuard)
   @Patch(':id')
   @ApiOkResponse({ type: UserDto })

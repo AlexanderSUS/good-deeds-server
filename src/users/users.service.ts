@@ -32,6 +32,14 @@ export class UsersService {
     return this.userModel.find();
   }
 
+  async findFriends(userId: string) {
+    const user = await this.findOne(userId);
+
+    return this.userModel.find({
+      id: { $in: user.friendsIds },
+    });
+  }
+
   async findOne(id: string) {
     const user = await this.userModel.findById(id);
 
