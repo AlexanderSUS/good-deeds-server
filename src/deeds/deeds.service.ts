@@ -19,8 +19,8 @@ export class DeedsService {
     return createDeed.save();
   }
 
-  findAll() {
-    return this.deedModel.find();
+  findAll(userId: string) {
+    return this.deedModel.find({ userId });
   }
 
   async findOne(id: string) {

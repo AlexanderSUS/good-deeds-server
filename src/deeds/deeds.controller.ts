@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
   UseGuards,
   HttpStatus,
   HttpCode,
@@ -23,7 +22,6 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { DeedGuard } from 'src/auth/guards/deed.guard';
-import RequestWithUser from 'src/auth/interface/reuestWithUser.interface';
 import { BadRequestDto } from 'src/common/dto/bad-request.dto';
 import { ForbiddenDto } from 'src/common/dto/forbidden.dto';
 import { NotFoundDto } from 'src/common/dto/not-found.dto';
@@ -35,7 +33,7 @@ import { UpdateDeedDto } from './dto/update-deed.dto';
 
 @ApiTags('deeds')
 @ApiCookieAuth()
-@Controller('deeds')
+@Controller('users/:userId/deeds')
 export class DeedsController {
   constructor(private readonly deedsService: DeedsService) {}
 
@@ -43,23 +41,26 @@ export class DeedsController {
   @ApiCreatedResponse({ type: DeedDto })
   @ApiBadRequestResponse({ type: BadRequestDto })
   create(
+    @Param('userId', ValidateMongoId) userId: string,
     @Body() createDeedDto: CreateDeedDto,
-    @Req() { user: { _id } }: RequestWithUser,
   ) {
-    return this.deedsService.create(createDeedDto, _id);
+    return this.deedsService.create(createDeedDto, userId);
   }
 
   @Get()
   @ApiOkResponse({ type: [DeedDto] })
-  findAll() {
-    return this.deedsService.findAll();
+  findAll(@Param('userId', ValidateMongoId) userId: string) {
+    return this.deedsService.findAll(userId);
   }
 
   @Get(':id')
   @ApiOkResponse({ type: DeedDto })
   @ApiNotFoundResponse()
   @ApiBadRequestResponse({ type: BadRequestDto })
-  findOne(@Param('id', ValidateMongoId) id: string) {
+  findOne(
+    @Param('userId', ValidateMongoId) userId: string,
+    @Param('id', ValidateMongoId) id: string,
+  ) {
     return this.deedsService.findOne(id);
   }
 
@@ -73,6 +74,7 @@ export class DeedsController {
   @ApiNotFoundResponse({ type: NotFoundDto })
   @ApiForbiddenResponse({ type: ForbiddenDto })
   update(
+    @Param('userId', ValidateMongoId) userId: string,
     @Param('id', ValidateMongoId) id: string,
     @Body() updateDeedDto: UpdateDeedDto,
   ) {
@@ -85,7 +87,10 @@ export class DeedsController {
   @ApiNoContentResponse()
   @ApiBadRequestResponse({ type: BadRequestDto })
   @ApiForbiddenResponse({ type: ForbiddenDto })
-  async remove(@Param('id', ValidateMongoId) id: string) {
+  async remove(
+    @Param('userId', ValidateMongoId) userId: string,
+    @Param('id', ValidateMongoId) id: string,
+  ) {
     await this.deedsService.remove(id);
   }
 }
