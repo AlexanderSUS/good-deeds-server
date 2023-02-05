@@ -10,4 +10,5 @@ export enum EnvVariables {
   accessExpiration = 'JWT_ACCESS_TOKEN_EXPIRATION_TIME',
   refreshSecret = 'JWT_REFRESH_TOKEN_SECRET',
   refreshExpiration = 'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
+  allowedOrigin = 'ALLOWED_ORIGIN',
 }

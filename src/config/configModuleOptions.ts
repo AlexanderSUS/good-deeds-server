@@ -15,6 +15,7 @@ export const configModuleOptions = {
     JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
     JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
     JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+    ALLOWED_ORIGIN: Joi.string().required(),
   }),
   validationOptions: {
     abortEarly: true,

@@ -25,6 +25,12 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get(EnvVariables.appPort);
   const host = configService.get(EnvVariables.appHost);
+  const allowedOrigin = configService.get(EnvVariables.allowedOrigin);
+
+  app.enableCors({
+    origin: allowedOrigin,
+    credentials: true,
+  });
 
   await app.listen(port, host, () => {
     console.log(`Application is running on ${port} port`);
