@@ -21,7 +21,7 @@ cd good-deeds-server
 docker compose up
 ```
 
-App will be available on `http://localhost:4000/api'
+App will be available on `http://localhost:4000'
 
 ## Swagger
 While the application is running, open your browser and navigate to `http://localhost:4000/docs`.

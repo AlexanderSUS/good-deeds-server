@@ -15,7 +15,6 @@ async function bootstrap() {
     .addCookieAuth()
     .build();
 
-  app.setGlobalPrefix('api');
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
 
