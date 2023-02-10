@@ -11,16 +11,16 @@ services:
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
     ports:
       - '27017:27017'
-  app:
-    image: alexandersus/good-deeds-server:v1
-    container_name: good-deeds-server
-    build: .
-    depends_on:
-      - mongo
-    ports:
-      - ${APP_PORT}:${APP_PORT}
-    volumes:
-      - .:/app
-    env_file: 
-    - .env
-    restart: unless-stopped
+  # app:
+  #   image: alexandersus/good-deeds-server:v1
+  #   container_name: good-deeds-server
+  #   build: .
+  #   depends_on:
+  #     - mongo
+  #   ports:
+  #     - ${APP_PORT}:${APP_PORT}
+  #   volumes:
+  #     - .:/app
+  #   env_file: 
+  #   - .env
+  #   restart: unless-stopped
