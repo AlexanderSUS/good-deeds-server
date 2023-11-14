@@ -36,13 +36,12 @@ export class UsersController {
   @Get()
   @ApiOkResponse({ type: [UserDto] })
   async findAll() {
-    return (await this.usersService.findAll()).map(
-      ({ _id, friendsIds, nickname }) => ({
-        _id,
-        friendsIds,
-        nickname,
-      }),
-    );
+    const users = await this.usersService.findAll();
+    return users.map(({ _id, friendsIds, nickname }) => ({
+      _id,
+      friendsIds,
+      nickname,
+    }));
   }
 
   @Get(':id')
